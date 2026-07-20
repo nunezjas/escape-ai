@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="EscapeAI is a multi-room AI-inspired escape-room game."
+  >
+
+  <title>EscapeAI | Haunted Escape Room</title>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <div class="background-fog fog-one"></div>
+  <div class="background-fog fog-two"></div>
+
+  <header class="game-header">
+    <div class="brand">
+      <p class="eyebrow">AI-POWERED ESCAPE ROOM</p>
+      <h1>Escape<span>AI</span></h1>
+    </div>
+
+    <div class="header-controls">
+      <div class="timer-card">
+        <span>Time Remaining</span>
+        <strong id="timer">30:00</strong>
+      </div>
+
+      <button
+        id="soundButton"
+        class="icon-button"
+        type="button"
+        aria-label="Toggle sound"
+      >
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <main class="game-layout">
+    <section class="main-panel">
+      <div class="scene-container">
+        <!-- ROOM 1 -->
+        <div
+          id="roomOneScene"
+          class="room-scene library-scene active-room"
+          aria-label="Haunted library"
+        >
+          <div class="scene-darkness"></div>
+          <div class="library-moon"></div>
+
+          <div class="library-window">
+            <div class="window-divider vertical"></div>
+            <div class="window-divider horizontal"></div>
+          </div>
+
+          <div class="library-shelf library-shelf-left">
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="library-shelf library-shelf-right">
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+
+            <div class="book-row">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="library-desk">
+            <div class="desk-journal">?</div>
+          </div>
+
+          <div class="library-candle candle-left">
+            <div class="flame"></div>
+          </div>
+
+          <div class="library-candle candle-right">
+            <div class="flame"></div>
+          </div>
+
+          <div class="ghost-librarian">👻</div>
+
+          <div class="scene-title-card">
+            <span>Room One</span>
+            <strong>The Haunted Library</strong>
+          </div>
+        </div>
+
+        <!-- ROOM 2 -->
+        <div
+          id="roomTwoScene"
+          class="room-scene laboratory-scene"
+          aria-label="Alchemist laboratory"
+        >
+          <div class="lab-background-glow"></div>
+
+          <div class="lab-window">
+            <div class="lab-moon">☾</div>
+          </div>
+
+          <div class="potion-shelf shelf-lab-left">
+            <div class="potion-row">
+              <span>🧪</span>
+              <span>⚗️</span>
+              <span>🧴</span>
+            </div>
+
+            <div class="potion-row">
+              <span>⚗️</span>
+              <span>🧪</span>
+              <span>🧴</span>
+            </div>
+
+            <div class="potion-row">
+              <span>🧴</span>
+              <span>⚗️</span>
+              <span>🧪</span>
+            </div>
+          </div>
+
+          <div class="potion-shelf shelf-lab-right">
+            <div class="potion-row">
+              <span>🧴</span>
+              <span>🧪</span>
+              <span>⚗️</span>
+            </div>
+
+            <div class="potion-row">
+              <span>🧪</span>
+              <span>⚗️</span>
+              <span>🧴</span>
+            </div>
+
+            <div class="potion-row">
+              <span>⚗️</span>
+              <span>🧴</span>
+              <span>🧪</span>
+            </div>
+          </div>
+
+          <div class="lab-workbench">
+            <div class="blue-vial">🧪</div>
+            <span>Workbench</span>
+          </div>
+
+          <div class="lab-cauldron">
+            <div class="cauldron-liquid"></div>
+            <div class="bubble bubble-one"></div>
+            <div class="bubble bubble-two"></div>
+            <div class="bubble bubble-three"></div>
+          </div>
+
+          <div class="stone-pedestal">
+            <div class="pedestal-basin"></div>
+            <div class="pedestal-symbol">☾</div>
+          </div>
+
+          <div class="lab-machine">
+            <div class="gear">⚙️</div>
+            <div class="gear small-gear">⚙️</div>
+          </div>
+
+          <div class="laboratory-door">
+            <div class="door-rune">☽</div>
+          </div>
+
+          <div class="laboratory-orb">🔮</div>
+
+          <div class="scene-title-card">
+            <span>Room Two</span>
+            <strong>The Alchemist’s Laboratory</strong>
+          </div>
+        </div>
+<!-- ==================================================
+     CINEMATIC ENDING SCENE
+================================================== -->
+
+<div
+  id="endingScene"
+  class="room-scene ending-scene"
+  aria-label="Moonlit courtyard ending"
+>
+  <!-- Night sky -->
+  <div class="ending-night-sky" aria-hidden="true">
+    <div class="ending-stars stars-small"></div>
+    <div class="ending-stars stars-large"></div>
+
+    <div class="ending-moon">
+      <div class="moon-crater crater-one"></div>
+      <div class="moon-crater crater-two"></div>
+      <div class="moon-crater crater-three"></div>
+    </div>
+
+    <div class="ending-cloud ending-cloud-one"></div>
+    <div class="ending-cloud ending-cloud-two"></div>
+    <div class="ending-cloud ending-cloud-three"></div>
+  </div>
+
+  <!-- Background castle -->
+  <div class="ending-castle" aria-hidden="true">
+    <div class="ending-castle-tower castle-left">
+      <span class="castle-window"></span>
+      <span class="castle-window window-two"></span>
+    </div>
+
+    <div class="ending-castle-center">
+      <span class="castle-window"></span>
+      <span class="castle-window window-two"></span>
+    </div>
+
+    <div class="ending-castle-tower castle-right">
+      <span class="castle-window"></span>
+      <span class="castle-window window-two"></span>
+    </div>
+  </div>
+
+  <!-- Courtyard -->
+  <div class="ending-courtyard-wall" aria-hidden="true"></div>
+  <div class="ending-courtyard-floor" aria-hidden="true"></div>
+
+  <!-- Final doorway -->
+  <div id="finalDoorway" class="final-doorway" aria-hidden="true">
+    <div class="doorway-stone doorway-stone-left"></div>
+    <div class="doorway-stone doorway-stone-right"></div>
+    <div class="doorway-arch"></div>
+
+    <div id="endingDoorLeft" class="ending-door ending-door-left">
+      <div class="door-panel door-panel-top"></div>
+      <div class="door-panel door-panel-bottom"></div>
+      <span class="door-handle"></span>
+    </div>
+
+    <div id="endingDoorRight" class="ending-door ending-door-right">
+      <div class="door-panel door-panel-top"></div>
+      <div class="door-panel door-panel-bottom"></div>
+      <span class="door-handle"></span>
+    </div>
+
+    <div class="doorway-light"></div>
+
+    <div class="ending-lantern ending-lantern-left">🔥</div>
+    <div class="ending-lantern ending-lantern-right">🔥</div>
+  </div>
+
+  <!-- Fountain -->
+  <div class="ending-fountain" aria-hidden="true">
+    <div class="fountain-stream"></div>
+    <div class="fountain-upper-bowl"></div>
+    <div class="fountain-column"></div>
+    <div class="fountain-lower-bowl"></div>
+    <div class="fountain-base"></div>
+  </div>
+
+  <!-- Animated fog -->
+  <div class="ending-fog ending-fog-back" aria-hidden="true"></div>
+  <div class="ending-fog ending-fog-middle" aria-hidden="true"></div>
+  <div class="ending-fog ending-fog-front" aria-hidden="true"></div>
+
+  <!-- Achievement -->
+  <div
+    id="achievementPopup"
+    class="achievement-popup"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="achievement-icon">🏆</span>
+
+    <div>
+      <span class="achievement-label">Achievement Unlocked</span>
+      <strong>Escape Artist</strong>
+    </div>
+  </div>
+
+  <!-- Main victory sequence -->
+  <section
+    id="victoryPanel"
+    class="victory-panel"
+    aria-labelledby="victoryTitle"
+  >
+    <p class="victory-eyebrow">Adventure Complete</p>
+
+    <div class="victory-emblem" aria-hidden="true">
+      <span>🏆</span>
+    </div>
+
+    <h2 id="victoryTitle">You Escaped!</h2>
+
+    <p class="victory-story">
+      You open the final door and step into the moonlit courtyard.
+      Behind you, the haunted library disappears into the fog.
+    </p>
+
+    <p class="victory-final-line">
+      You escaped both rooms!
+    </p>
+
+    <div class="victory-divider" aria-hidden="true">
+      <span></span>
+      <strong>✦</strong>
+      <span></span>
+    </div>
+
+    <div class="ending-results">
+      <article class="ending-result">
+        <span>Completion Time</span>
+        <strong id="finalCompletionTime">00:00</strong>
+      </article>
+
+      <article class="ending-result">
+        <span>Time Remaining</span>
+        <strong id="finalTimeRemaining">00:00</strong>
+      </article>
+
+      <article class="ending-result ending-rank-result">
+        <span>Escape Rank</span>
+        <strong id="finalRank">S</strong>
+      </article>
+    </div>
+
+    <div class="ending-actions">
+      <button
+        id="playAgainButton"
+        class="ending-primary-button"
+        type="button"
+      >
+        <span>↻</span>
+        Play Again
+      </button>
+
+      <button
+        id="showCreditsButton"
+        class="ending-secondary-button"
+        type="button"
+      >
+        View Credits
+      </button>
+    </div>
+  </section>
+
+  <!-- Credits -->
+  <section
+    id="endingCredits"
+    class="ending-credits"
+    aria-labelledby="creditsTitle"
+    aria-hidden="true"
+  >
+    <p class="credits-small-title">EscapeAI Presents</p>
+
+    <h2 id="creditsTitle">
+      The Haunted Laboratory
+    </h2>
+
+    <div class="credits-content">
+      <p>
+        Game Design and Development
+        <strong>Jassiris Nunez</strong>
+      </p>
+
+      <p>
+        AI Command Interpreter
+        <strong>Google Gemini</strong>
+      </p>
+
+      <p>
+        Player
+        <strong>The Escape Artist</strong>
+      </p>
+    </div>
+
+    <p class="credits-message">
+      Thank you for playing.
+    </p>
+
+    <button
+      id="closeCreditsButton"
+      class="ending-secondary-button"
+      type="button"
+    >
+      Return to Results
+    </button>
+  </section>
+
+  <!-- Skip control -->
+  <button
+    id="skipEndingButton"
+    class="skip-ending-button"
+    type="button"
+  >
+    Skip Animation
+  </button>
+</div>
+        <div id="transitionOverlay" class="transition-overlay">
+          <div class="transition-content">
+            <span>Entering</span>
+            <strong>The Alchemist’s Laboratory</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-information">
+        <div>
+          <p class="eyebrow">CURRENT LOCATION</p>
+          <h2 id="roomName">The Haunted Library</h2>
+        </div>
+
+        <button
+          id="restartButton"
+          class="secondary-button"
+          type="button"
+        >
+          Restart Game
+        </button>
+      </div>
+
+      <p id="roomDescription" class="room-description">
+        You wake up inside an abandoned library at midnight. The exit door
+        is locked, and a ghostly librarian watches silently from behind an
+        old wooden desk.
+      </p>
+    </section>
+
+    <aside class="sidebar">
+      <section class="side-card">
+        <div class="card-header">
+          <h2>Inventory</h2>
+          <span id="inventoryCount">0 items</span>
+        </div>
+
+        <div id="inventoryList" class="inventory-list">
+          <p class="empty-message">
+            Your inventory is empty.
+          </p>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="card-header">
+          <h2>Progress</h2>
+          <span id="progressText">0%</span>
+        </div>
+
+        <div class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <ul id="objectiveList" class="objective-list">
+          <li>
+            <span class="objective-status">○</span>
+            <span class="objective-text">Search the library</span>
+          </li>
+
+          <li>
+            <span class="objective-status">○</span>
+            <span class="objective-text">Open the locked journal</span>
+          </li>
+
+          <li>
+            <span class="objective-status">○</span>
+            <span class="objective-text">Discover the secret passage</span>
+          </li>
+
+          <li>
+            <span class="objective-status">○</span>
+            <span class="objective-text">Enter the next room</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="side-card command-card">
+        <h2>Quick Commands</h2>
+
+        <button
+          class="command-example"
+          type="button"
+        >
+          Inspect the room
+        </button>
+
+        <button
+          class="command-example"
+          type="button"
+        >
+          Check inventory
+        </button>
+
+        <button
+          class="command-example"
+          type="button"
+        >
+          Ask for a hint
+        </button>
+      </section>
+
+      <section class="side-card room-counter-card">
+        <span>Current Room</span>
+        <strong id="roomCounter">1 of 2</strong>
+      </section>
+    </aside>
+
+    <section class="conversation-panel">
+      <div class="conversation-header">
+        <div>
+          <p class="eyebrow">GAME MASTER</p>
+          <h2 id="gameMasterName">The Ghost Librarian</h2>
+        </div>
+
+        <span id="connectionStatus" class="online-status">
+          <span></span>
+          Online
+        </span>
+      </div>
+
+      <div
+        id="messageHistory"
+        class="message-history"
+        aria-live="polite"
+      >
+        <article class="message narrator-message">
+          <div class="message-avatar">👻</div>
+
+          <div class="message-content">
+            <span class="speaker-name">Ghost Librarian</span>
+
+            <p>
+              Welcome, traveler. The library has been waiting for you.
+              Find the hidden passage before midnight, or you may remain
+              here forever.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <form id="commandForm" class="command-form">
+        <label for="commandInput" class="sr-only">
+          Enter a game command
+        </label>
+
+        <input
+          id="commandInput"
+          name="command"
+          type="text"
+          maxlength="300"
+          placeholder="What would you like to do?"
+          autocomplete="off"
+          required
+        >
+
+        <button
+          id="sendButton"
+          type="submit"
+        >
+          Send
+        </button>
+      </form>
+
+      <p id="commandHelp" class="command-help">
+        Try “inspect the bookshelf” or “ask for a hint.”
+      </p>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
