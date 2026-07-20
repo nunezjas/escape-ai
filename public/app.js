@@ -900,6 +900,40 @@ function speakMoonlight() {
 }
 
 
+function escapeLaboratory() {
+  const room = gameState.room2;
+
+  if (gameState.gameCompleted) {
+    return;
+  }
+
+  if (!room.passwordSpoken) {
+    addMessage(
+      "The final door is still sealed. Activate the pedestal and speak the correct password first.",
+      "narrator"
+    );
+    return;
+  }
+
+  room.completed = true;
+  gameState.gameCompleted = true;
+
+  clearInterval(timerInterval);
+  updateProgress();
+
+  addMessage(
+    "You push open the final door and step into the moonlit courtyard. You have escaped!",
+    "narrator"
+  );
+
+  disableGame();
+
+  setTimeout(() => {
+    showEndingScene();
+  }, 900);
+}
+
+
 /* ==================================================
    ENDING SCENE
 ================================================== */
@@ -1464,6 +1498,8 @@ function processRoomTwoCommand(normalized) {
   normalized.includes("exit through the final door") ||
   normalized.includes("escape laboratory") ||
   normalized.includes("escape the laboratory") ||
+  normalized.includes("exit laboratory") ||
+  normalized.includes("exit the laboratory") ||
   normalized.includes("leave laboratory") ||
   normalized.includes("leave the laboratory")
 ) {
@@ -1540,20 +1576,27 @@ async function processTypedCommand(command) {
     return;
   }
 
+  // Handle known game commands locally first.
+  const locallyHandled =
+    gameState.currentRoom === 1
+      ? processRoomOneCommand(normalized)
+      : processRoomTwoCommand(normalized);
+
+  if (locallyHandled) {
+    return;
+  }
+
   setCommandLoading(true);
 
   try {
     const response = await fetch("/api/interpret", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
         command,
         currentRoom: gameState.currentRoom,
-
         gameState: {
           inventory: gameState.inventory,
           room1: gameState.room1,
@@ -1568,18 +1611,16 @@ async function processTypedCommand(command) {
       );
     }
 
-    const interpretation =
-      await response.json();
+    const interpretation = await response.json();
 
     console.log(
       "AI interpretation:",
       interpretation
     );
 
-    const handled =
-      executeGameAction(
-        interpretation.action
-      );
+    const handled = executeGameAction(
+      interpretation.action
+    );
 
     if (
       !handled ||
@@ -1596,21 +1637,15 @@ async function processTypedCommand(command) {
       error
     );
 
-    const handled =
-      gameState.currentRoom === 1
-        ? processRoomOneCommand(normalized)
-        : processRoomTwoCommand(normalized);
-
-    if (!handled) {
-      addMessage(
-        "The magical interpreter is temporarily unavailable. Try a simpler command such as “inspect the pedestal” or “pour the vial.”",
-        "narrator"
-      );
-    }
+    addMessage(
+      "The magical interpreter is temporarily unavailable. Try a simpler command such as “inspect the pedestal” or “pour the vial.”",
+      "narrator"
+    );
   } finally {
     setCommandLoading(false);
   }
 }
+
 /* ==================================================
    EVENTS
 ================================================== */
