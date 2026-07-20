@@ -1108,92 +1108,439 @@ function closeEndingCredits() {
 }
 
 function showEndingScene() {
-  roomOneScene.classList.remove(
-    "active-room"
-  );
+  roomOneScene.classList.remove("active-room");
+  roomTwoScene.classList.remove("active-room");
 
-  roomTwoScene.classList.remove(
-    "active-room"
-  );
-
-  endingScene.classList.add(
-    "active-room"
-  );
-
-  endingScene.classList.remove(
-    "ending-running",
-    "ending-skipped",
-    "ending-finished"
-  );
-
-  /*
-   * Restart the animation even if this function
-   * is called again during testing.
-   */
-  void endingScene.offsetWidth;
-
-  endingScene.classList.add(
-    "ending-running"
-  );
+  if (endingScene) {
+    endingScene.classList.remove("active-room");
+  }
 
   calculateEndingResults();
 
-  roomName.textContent =
-    "The Moonlit Courtyard";
-
+  roomName.textContent = "The Moonlit Courtyard";
   roomDescription.textContent =
-    "You escaped the haunted library and the alchemist’s laboratory. " +
-    "The moon shines over the courtyard as the building disappears into the fog.";
-
-  gameMasterName.textContent =
-    "Adventure Complete";
-
+    "You escaped the haunted library and the alchemist’s laboratory.";
+  gameMasterName.textContent = "Adventure Complete";
   roomCounter.textContent = "2 of 2";
-
-  commandHelp.textContent =
-    "The adventure is complete.";
+  commandHelp.textContent = "The adventure is complete.";
 
   progressBar.style.width = "100%";
   progressText.textContent = "100%";
 
-  objectiveTexts[0].textContent =
-    "Found the secret passage";
-
-  objectiveTexts[1].textContent =
-    "Entered the laboratory";
-
-  objectiveTexts[2].textContent =
-    "Solved the moonlight puzzle";
-
-  objectiveTexts[3].textContent =
-    "Escaped both rooms";
+  objectiveTexts[0].textContent = "Found the secret passage";
+  objectiveTexts[1].textContent = "Entered the laboratory";
+  objectiveTexts[2].textContent = "Solved the moonlight puzzle";
+  objectiveTexts[3].textContent = "Escaped both rooms";
 
   objectiveItems.forEach((item) => {
     item.classList.add("completed");
 
-    const status =
-      item.querySelector(
-        ".objective-status"
-      );
+    const status = item.querySelector(".objective-status");
 
     if (status) {
       status.textContent = "✓";
     }
   });
 
-  /*
-   * Play the victory sound shortly before
-   * the result panel appears.
-   */
-  setTimeout(() => {
-    playVictorySound();
-  }, 5100);
+  showVictoryOverlay();
 
   setTimeout(() => {
-    endingScene.classList.add(
-      "ending-finished"
-    );
-  }, 7000);
+    playVictorySound();
+  }, 700);
+}
+
+function showVictoryOverlay() {
+  const oldOverlay = document.querySelector("#escapeVictoryOverlay");
+
+  if (oldOverlay) {
+    oldOverlay.remove();
+  }
+
+  const totalGameSeconds = 30 * 60;
+  const usedSeconds = Math.max(
+    0,
+    totalGameSeconds - secondsRemaining
+  );
+
+  let rank = "C";
+
+  if (secondsRemaining >= 20 * 60) {
+    rank = "S";
+  } else if (secondsRemaining >= 12 * 60) {
+    rank = "A";
+  } else if (secondsRemaining >= 5 * 60) {
+    rank = "B";
+  }
+
+  const overlay = document.createElement("section");
+  overlay.id = "escapeVictoryOverlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "EscapeAI victory screen");
+
+  overlay.innerHTML = `
+    <style>
+      body.escape-victory-open {
+        overflow: hidden;
+      }
+
+      #escapeVictoryOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        padding: 24px;
+        overflow: auto;
+        color: #fffaf0;
+        background:
+          radial-gradient(circle at 50% 18%, rgba(226, 190, 102, 0.18), transparent 26%),
+          radial-gradient(circle at 15% 80%, rgba(92, 61, 128, 0.2), transparent 30%),
+          linear-gradient(155deg, #08070d 0%, #12101d 48%, #07070c 100%);
+        isolation: isolate;
+        animation: victoryFadeIn 700ms ease both;
+      }
+
+      #escapeVictoryOverlay::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -3;
+        opacity: 0.65;
+        background-image:
+          radial-gradient(circle, rgba(255,255,255,0.95) 0 1px, transparent 1.5px),
+          radial-gradient(circle, rgba(232,198,111,0.8) 0 1px, transparent 1.5px);
+        background-position: 0 0, 48px 62px;
+        background-size: 105px 105px, 145px 145px;
+        animation: starDrift 18s linear infinite;
+      }
+
+      #escapeVictoryOverlay::after {
+        content: "";
+        position: fixed;
+        left: -10%;
+        right: -10%;
+        bottom: -75px;
+        z-index: -1;
+        height: 220px;
+        filter: blur(22px);
+        background:
+          radial-gradient(ellipse at center, rgba(211, 220, 226, 0.26), transparent 65%),
+          linear-gradient(to top, rgba(220, 229, 235, 0.2), transparent);
+        animation: fogMove 8s ease-in-out infinite alternate;
+      }
+
+      .victory-moon {
+        position: absolute;
+        top: clamp(30px, 7vh, 85px);
+        left: 50%;
+        width: clamp(110px, 12vw, 170px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        box-shadow:
+          0 0 35px rgba(255, 230, 157, 0.62),
+          0 0 110px rgba(226, 189, 97, 0.28);
+        background:
+          radial-gradient(circle at 35% 32%, rgba(255,255,255,0.9), transparent 8%),
+          radial-gradient(circle at 66% 60%, rgba(148,119,80,0.22), transparent 13%),
+          radial-gradient(circle at 45% 50%, #fff7d8 0%, #e7c775 72%, #c69d44 100%);
+        animation: moonRise 1.3s cubic-bezier(.2,.8,.2,1) both;
+      }
+
+      .victory-card {
+        width: min(760px, 100%);
+        margin-top: clamp(80px, 14vh, 150px);
+        padding: clamp(28px, 5vw, 58px);
+        text-align: center;
+        border: 1px solid rgba(226, 190, 102, 0.38);
+        border-radius: 28px;
+        background: linear-gradient(
+          145deg,
+          rgba(20, 17, 31, 0.91),
+          rgba(10, 9, 16, 0.95)
+        );
+        box-shadow:
+          0 30px 100px rgba(0, 0, 0, 0.65),
+          inset 0 1px 0 rgba(255,255,255,0.06);
+        backdrop-filter: blur(18px);
+        animation: cardRise 950ms 180ms cubic-bezier(.2,.9,.2,1) both;
+      }
+
+      .victory-eyebrow {
+        margin: 0 0 12px;
+        color: #e2bd69;
+        font: 700 0.82rem/1.2 system-ui, sans-serif;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+      }
+
+      .victory-trophy {
+        display: inline-grid;
+        place-items: center;
+        width: 70px;
+        height: 70px;
+        margin-bottom: 10px;
+        font-size: 2.6rem;
+        border: 1px solid rgba(226, 190, 102, 0.42);
+        border-radius: 50%;
+        background: rgba(226, 190, 102, 0.1);
+        box-shadow: 0 0 32px rgba(226, 190, 102, 0.18);
+        animation: trophyPop 900ms 700ms cubic-bezier(.2,1.4,.3,1) both;
+      }
+
+      .victory-title {
+        margin: 0;
+        color: #fffaf0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.5rem, 7vw, 5rem);
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+        text-shadow: 0 5px 28px rgba(0,0,0,0.5);
+      }
+
+      .victory-title span {
+        color: #e5bd63;
+      }
+
+      .victory-copy {
+        max-width: 590px;
+        margin: 22px auto 30px;
+        color: #c9c3d3;
+        font: 400 clamp(1rem, 2vw, 1.12rem)/1.75 system-ui, sans-serif;
+      }
+
+      .victory-achievement {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 28px;
+        padding: 10px 16px;
+        color: #f5d889;
+        font: 700 0.88rem/1.2 system-ui, sans-serif;
+        border: 1px solid rgba(226, 190, 102, 0.35);
+        border-radius: 999px;
+        background: rgba(226, 190, 102, 0.08);
+      }
+
+      .victory-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 0 auto 30px;
+      }
+
+      .victory-stat {
+        min-width: 0;
+        padding: 18px 10px;
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 16px;
+        background: rgba(255,255,255,0.035);
+      }
+
+      .victory-stat strong {
+        display: block;
+        overflow-wrap: anywhere;
+        color: #fff4cf;
+        font: 700 clamp(1.35rem, 4vw, 2rem)/1 Georgia, serif;
+      }
+
+      .victory-stat span {
+        display: block;
+        margin-top: 8px;
+        color: #aaa3b8;
+        font: 700 0.7rem/1 system-ui, sans-serif;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .victory-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .victory-button {
+        min-width: 155px;
+        padding: 14px 22px;
+        cursor: pointer;
+        color: #17121e;
+        font: 800 0.95rem/1 system-ui, sans-serif;
+        border: 1px solid #e4bd64;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f1d07d, #c9983e);
+        box-shadow: 0 10px 28px rgba(195, 142, 43, 0.2);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .victory-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 34px rgba(195, 142, 43, 0.3);
+      }
+
+      .victory-button.secondary {
+        color: #eee8f4;
+        border-color: rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.055);
+        box-shadow: none;
+      }
+
+      .victory-credits {
+        display: none;
+        margin-top: 25px;
+        padding: 20px;
+        color: #bbb4c7;
+        font: 400 0.94rem/1.65 system-ui, sans-serif;
+        border-top: 1px solid rgba(255,255,255,0.09);
+      }
+
+      .victory-credits.visible {
+        display: block;
+        animation: victoryFadeIn 350ms ease both;
+      }
+
+      .victory-credits strong {
+        color: #f3d37c;
+      }
+
+      @keyframes victoryFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes cardRise {
+        from { opacity: 0; transform: translateY(34px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes moonRise {
+        from { opacity: 0; transform: translate(-50%, 55px) scale(0.72); }
+        to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      }
+
+      @keyframes trophyPop {
+        from { opacity: 0; transform: scale(0.35) rotate(-18deg); }
+        to { opacity: 1; transform: scale(1) rotate(0); }
+      }
+
+      @keyframes starDrift {
+        from { transform: translateY(0); }
+        to { transform: translateY(105px); }
+      }
+
+      @keyframes fogMove {
+        from { transform: translateX(-4%); opacity: 0.55; }
+        to { transform: translateX(4%); opacity: 0.9; }
+      }
+
+      @media (max-width: 620px) {
+        #escapeVictoryOverlay {
+          padding: 14px;
+          place-items: start center;
+        }
+
+        .victory-card {
+          margin-top: 120px;
+          padding: 28px 18px;
+          border-radius: 22px;
+        }
+
+        .victory-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .victory-button {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #escapeVictoryOverlay,
+        #escapeVictoryOverlay *,
+        #escapeVictoryOverlay::before,
+        #escapeVictoryOverlay::after {
+          animation: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+
+    <div class="victory-moon" aria-hidden="true"></div>
+
+    <article class="victory-card">
+      <p class="victory-eyebrow">Adventure Complete</p>
+      <div class="victory-trophy" aria-hidden="true">🏆</div>
+
+      <h1 class="victory-title">
+        You <span>Escaped!</span>
+      </h1>
+
+      <p class="victory-copy">
+        The final door opens into a moonlit courtyard. Behind you,
+        the haunted library and the alchemist’s laboratory disappear
+        into the fog. Every puzzle has been solved.
+      </p>
+
+      <div class="victory-achievement">
+        ✦ Achievement Unlocked: Escape Artist
+      </div>
+
+      <div class="victory-stats">
+        <div class="victory-stat">
+          <strong>${formatTime(usedSeconds)}</strong>
+          <span>Completion Time</span>
+        </div>
+
+        <div class="victory-stat">
+          <strong>${formatTime(Math.max(0, secondsRemaining))}</strong>
+          <span>Time Remaining</span>
+        </div>
+
+        <div class="victory-stat">
+          <strong>${rank}</strong>
+          <span>Escape Rank</span>
+        </div>
+      </div>
+
+      <div class="victory-actions">
+        <button class="victory-button" id="victoryPlayAgain" type="button">
+          Play Again
+        </button>
+
+        <button class="victory-button secondary" id="victoryCreditsButton" type="button">
+          View Credits
+        </button>
+      </div>
+
+      <div class="victory-credits" id="victoryCredits">
+        <strong>EscapeAI</strong><br>
+        Created by Jassiris Nunez<br>
+        AI command interpretation powered by Google Gemini.
+      </div>
+    </article>
+  `;
+
+  document.body.classList.add("escape-victory-open");
+  document.body.appendChild(overlay);
+
+  const playAgain = overlay.querySelector("#victoryPlayAgain");
+  const creditsButton = overlay.querySelector("#victoryCreditsButton");
+  const credits = overlay.querySelector("#victoryCredits");
+
+  playAgain.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  creditsButton.addEventListener("click", () => {
+    const isVisible = credits.classList.toggle("visible");
+
+    creditsButton.textContent =
+      isVisible ? "Hide Credits" : "View Credits";
+  });
+
+  playAgain.focus();
 }
 
 /* ==================================================
