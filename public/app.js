@@ -1517,7 +1517,7 @@ function showVictoryOverlay() {
       <div class="victory-credits" id="victoryCredits">
         <strong>EscapeAI</strong><br>
         Created by Jassiris Nunez<br>
-        AI command interpretation powered by Google Gemini.
+        AI command interpretation powered by OpenAi.
       </div>
     </article>
   `;
